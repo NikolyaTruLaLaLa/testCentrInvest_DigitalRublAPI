@@ -41,7 +41,7 @@ namespace Domain.Entities
                 throw new ArgumentException($"{paramName} is required", paramName);
         }
 
-        public void AddWallet(string code, WalletStatus initialStatus)
+        public Wallet AddWallet(string code, WalletStatus initialStatus)
         {
             if (_wallets.ContainsKey(code))
                 throw new DomainException($"wallet {code} is already binded to client {this.Mid}");
@@ -53,6 +53,7 @@ namespace Domain.Entities
                 throw new DomainException($"wallet {code} is active and couldn't be added to client {this.Mid} with active wallet");
             
             _wallets.Add(code, newWallet);
+            return newWallet;
         }
 
         // может  сделать так, чтобы его установить только однажды?
