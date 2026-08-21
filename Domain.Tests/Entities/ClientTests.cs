@@ -54,21 +54,20 @@ namespace Domain.Tests.Entities
         public void BindingWalletToClient()
         {
             Client client = new Client("mid1", "Петров", "Пётр", "Петрович");
-            Wallet wallet = new Wallet(client, "abrac1312", WalletStatus.Prcs);
 
-            client.AddWallet(wallet);
+            client.AddWallet("abrac1312", WalletStatus.Prcs);
 
-            client.Wallets.Should().Contain(wallet);
+            client.Wallets.First().Code.Should().Be("abrac1312");
+            client.Wallets.First().Status.Should().Be(WalletStatus.Prcs);
         }
 
         [Fact]
         public void BindingWalletDublicateExceptionToClient()
         {
             Client client = new Client("mid1", "Петров", "Пётр", "Петрович");
-            Wallet wallet = new Wallet(client, "abrac1312", WalletStatus.Prcs);
 
-            client.AddWallet(wallet);
-            Action act = () => client.AddWallet(wallet);
+            client.AddWallet("abrac1312", WalletStatus.Prcs);
+            Action act = () => client.AddWallet("abrac1312", WalletStatus.Prcs);
             act.Should().Throw<Exception>().And.Should().BeOfType(typeof(DomainException));
         }
 
@@ -76,11 +75,9 @@ namespace Domain.Tests.Entities
         public void BindingWalletToACtiveExceptionToClient()
         {
             Client client = new Client("mid1", "Петров", "Пётр", "Петрович");
-            Wallet wallet1 = new Wallet(client, "abrac1312", WalletStatus.Prcs);
-            Wallet wallet2 = new Wallet(client, "goyda1432", WalletStatus.Blck);
 
-            client.AddWallet(wallet1);
-            Action act = () => client.AddWallet(wallet2);
+            client.AddWallet("abrac1312", WalletStatus.Prcs);
+            Action act = () => client.AddWallet("goyda1432", WalletStatus.Blck);
             act.Should().Throw<Exception>().And.Should().BeOfType(typeof(DomainException));
         }
 

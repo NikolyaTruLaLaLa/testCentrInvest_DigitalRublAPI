@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Enums;
+using Domain.Exceptions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.Entities
@@ -12,8 +13,8 @@ namespace Domain.Entities
         public string Patronymic { get; private set; }
         public string? ParticipantDRId { get; private set; }
 
-        private readonly List<Wallet> _wallets = new List<Wallet>();
-        public IReadOnlyCollection<Wallet> Wallets => _wallets.AsReadOnly();
+        private readonly Dictionary<string, Wallet> _wallets = new();
+        public IReadOnlyCollection<Wallet> Wallets => _wallets.Values;
 
         private Client() {
             Mid = string.Empty;
@@ -40,15 +41,18 @@ namespace Domain.Entities
                 throw new ArgumentException($"{paramName} is required", paramName);
         }
 
-        public void AddWallet(Wallet wallet)
+        public void AddWallet(string code, WalletStatus initialStatus)
         {
-            if (_wallets.Contains(wallet))
-                throw new DomainException($"wallet {wallet.Code} is already binded to client {this.Mid}");
+            if (_wallets.ContainsKey(code))
+                throw new DomainException($"wallet {code} is already binded to client {this.Mid}");
 
-            if (this.HasActiveWallet() && wallet.IsActive)
-                throw new DomainException($"wallet {wallet.Code} is active and couldn't be added to client {this.Mid} with active wallet");
+            Wallet newWallet = new Wallet(this, code, initialStatus);
             
-            _wallets.Add(wallet);
+            // добавить функицю для проверки enum и тогда поднять проверку выше
+            if (this.HasActiveWallet() && newWallet.IsActive)
+                throw new DomainException($"wallet {code} is active and couldn't be added to client {this.Mid} with active wallet");
+            
+            _wallets.Add(code, newWallet);
         }
 
         // может  сделать так, чтобы его установить только однажды?
@@ -59,7 +63,7 @@ namespace Domain.Entities
 
         public bool HasActiveWallet()
         {
-            return _wallets.Any(w => w.IsActive);
+            return _wallets.Any(kvp => kvp.Value.IsActive);
         }
     }
 }
