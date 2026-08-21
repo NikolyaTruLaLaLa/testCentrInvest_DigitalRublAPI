@@ -93,5 +93,55 @@ namespace Domain.Tests.Entities
             client.ParticipantDRId.Should().Be("grokaemAlgosi123r3");
         }
 
+        [Fact]
+        public void GetWalletByCode_ShouldReturnWallet_WhenCodeExists()
+        {
+            var client = new Client("mid1", "Иванов", "Иван", "Иванович", null);
+            var wallet = client.AddWallet("WALLET001", WalletStatus.Actv);
+
+            var result = client.getWalletByCode("WALLET001");
+
+            Assert.NotNull(result);
+            Assert.Equal("WALLET001", result.Code);
+            Assert.Same(wallet, result);
+        }
+
+        [Fact]
+        public void GetWalletByCode_ShouldThrowArgumentNullException_WhenCodeIsNull()
+        {
+            var client = new Client("mid1", "Иванов", "Иван", "Иванович", null);
+
+            var ex = Assert.Throws<ArgumentNullException>(() => client.getWalletByCode(null));
+            Assert.Contains("Code cannot be null or empty.", ex.Message);
+        }
+
+        [Fact]
+        public void GetWalletByCode_ShouldThrowArgumentNullException_WhenCodeIsEmpty()
+        {
+            var client = new Client("mid1", "Иванов", "Иван", "Иванович", null);
+
+            var ex = Assert.Throws<ArgumentNullException>(() => client.getWalletByCode(""));
+            Assert.Contains("Code cannot be null or empty.", ex.Message);
+        }
+
+        [Fact]
+        public void GetWalletByCode_ShouldThrowArgumentNullException_WhenCodeIsWhitespace()
+        {
+            var client = new Client("mid1", "Иванов", "Иван", "Иванович", null);
+
+            var ex = Assert.Throws<ArgumentNullException>(() => client.getWalletByCode("   "));
+            Assert.Contains("Code cannot be null or empty.", ex.Message);
+        }
+
+        [Fact]
+        public void GetWalletByCode_ShouldThrowDomainException_WhenCodeNotFound()
+        {
+            var client = new Client("mid1", "Иванов", "Иван", "Иванович", null);
+
+            var ex = Assert.Throws<DomainException>(() => client.getWalletByCode("NONEXISTENT"));
+            Assert.Contains("Wallet with code 'NONEXISTENT' not found", ex.Message);
+            Assert.Contains("mid1", ex.Message);
+        }
+
     }
 }

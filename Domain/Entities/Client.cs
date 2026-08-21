@@ -66,5 +66,16 @@ namespace Domain.Entities
         {
             return _wallets.Any(kvp => kvp.Value.IsActive);
         }
+
+        public Wallet getWalletByCode(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                throw new ArgumentNullException(nameof(code), "Code cannot be null or empty.");
+
+            if (_wallets.TryGetValue(code, out var wallet))
+                return wallet;
+
+            throw new DomainException($"Wallet with code '{code}' not found for client {Mid}.");
+        }
     }
 }
