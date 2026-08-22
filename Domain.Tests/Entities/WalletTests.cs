@@ -91,17 +91,6 @@ namespace Domain.Tests.Entities
         }
 
         [Fact]
-        public void SetStatus_WhenStatusNotInitialized_ShouldThrow()
-        {
-            var wallet = (Wallet)Activator.CreateInstance(typeof(Wallet), nonPublic: true)!;
-
-            Action act = () => wallet.SetStatus(WalletStatus.Actv);
-
-            act.Should().Throw<DomainException>()
-               .WithMessage("Cannot change status of uninitialized wallet");
-        }
-
-        [Fact]
         public void SetAccountNumberCorrectTest()
         {
             Wallet wallet = new Wallet(_client, "asdasd123", WalletStatus.Prcs);

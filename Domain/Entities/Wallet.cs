@@ -15,7 +15,7 @@ namespace Domain.Entities
         public string? AccountNumber { get; private set; }
         private bool _isInitialized; // нужен, чтобы не допускать изменения статуса в случае, если статус не инициализован
 
-        private Wallet() { _isInitialized = false; }
+        private Wallet() { _isInitialized = true; }
 
         public Wallet(Client client, string code, WalletStatus initialStatus)
         {

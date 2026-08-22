@@ -13,8 +13,8 @@ namespace Domain.Entities
         public string Patronymic { get; private set; }
         public string? ParticipantDRId { get; private set; }
 
-        private readonly Dictionary<string, Wallet> _wallets = new();
-        public IReadOnlyCollection<Wallet> Wallets => _wallets.Values;
+        private readonly List<Wallet> _wallets = new();
+        public IReadOnlyCollection<Wallet> Wallets => _wallets.AsReadOnly();
 
         private Client() {
             Mid = string.Empty;
@@ -43,16 +43,14 @@ namespace Domain.Entities
 
         public Wallet AddWallet(string code, WalletStatus initialStatus)
         {
-            if (_wallets.ContainsKey(code))
-                throw new DomainException($"wallet {code} is already binded to client {this.Mid}");
-
+            if (_wallets.Any(w => w.Code == code))
+                throw new DomainException($"Wallet with code '{code}' already exists.");
             Wallet newWallet = new Wallet(this, code, initialStatus);
-            
             // добавить функицю для проверки enum и тогда поднять проверку выше
-            if (this.HasActiveWallet() && newWallet.IsActive)
-                throw new DomainException($"wallet {code} is active and couldn't be added to client {this.Mid} with active wallet");
+            if (newWallet.IsActive && _wallets.Any(w => w.IsActive))
+                throw new DomainException("Client already has an active wallet.");
             
-            _wallets.Add(code, newWallet);
+            _wallets.Add(newWallet);
             return newWallet;
         }
 
@@ -64,18 +62,17 @@ namespace Domain.Entities
 
         public bool HasActiveWallet()
         {
-            return _wallets.Any(kvp => kvp.Value.IsActive);
+            return _wallets.Any(v => v.IsActive);
         }
 
         public Wallet getWalletByCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                throw new ArgumentNullException(nameof(code), "Code cannot be null or empty.");
-
-            if (_wallets.TryGetValue(code, out var wallet))
-                return wallet;
-
-            throw new DomainException($"Wallet with code '{code}' not found for client {Mid}.");
+                throw new ArgumentNullException("Code cannot be null or empty.");
+            var wallet = _wallets.FirstOrDefault(w => w.Code == code);
+            if (wallet == null)
+                throw new DomainException($"Wallet with code '{code}' not found for client {Mid}.");
+            return wallet;
         }
     }
 }
