@@ -11,5 +11,6 @@ namespace Domain.Interfaces
             string? searchTerm,
             CancellationToken cancellationToken = default);
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task AddWalletAsync(Wallet wallet, CancellationToken cancellationToken = default);
     }
 }
