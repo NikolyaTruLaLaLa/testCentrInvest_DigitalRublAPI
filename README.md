@@ -35,7 +35,7 @@ cd testCentrInvest_DigitalRublAPI
 Убедитесь, что PostgreSQL установлен и запущен. Можно использовать локальную установку или Docker:
 
 ```bash
-docker run --name postgres-db -e POSTGRES_PASSWORD=ваш_пароль -p 5433:5433 -d postgres
+docker run --name postgres-db -e POSTGRES_PASSWORD=ваш_пароль -p 5433:5432 -d postgres
 ```
 
 Создайте базу данных (или дайте приложению создать её автоматически при первом запуске).
@@ -58,6 +58,8 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Po
 Так как Infrastructure не имеет своего `appsettings.json`, необходимо задать системную переменную окружения:
 
 ```cmd
+сd ..
+cd Infrastructure
 setx ConnectionStrings__DefaultConnection "Host=localhost;Port=5433;Database=DigitalRubleDb;Username=postgres;Password=ваш_пароль"
 ```
 
@@ -68,6 +70,7 @@ setx ConnectionStrings__DefaultConnection "Host=localhost;Port=5433;Database=Dig
 В корневой папке решения выполните:
 
 ```bash
+cd ..
 dotnet run --project WebAPI
 ```
 
@@ -79,7 +82,7 @@ dotnet run --project WebAPI
 ### 5. Откройте UI
 
 В браузере перейдите по адресу:  
-[http://localhost:5261](http://localhost:5261)  
+[http://localhost:5261/index.html?](http://localhost:5261/index.html?)  
 (порт может отличаться, проверьте вывод в консоли).
 
 ### 6. Документация API (Swagger)
@@ -132,6 +135,35 @@ Swagger доступен только в режиме **Development** по ад�
 **Связи:** один клиент может иметь много кошельков. Каскадное удаление включено (при удалении клиента удаляются все его кошельки).
 
 ---
+## DTO (Data Transfer Objects)
+
+Для передачи данных между слоями и внешними клиентами используются DTO — объекты, содержащие только необходимые поля без бизнес-логики. Основные DTO в проекте:
+
+- **`ClientDto`** — представляет клиента: `mid`, `fullName`, `participantDRId`.
+- **`WalletDto`** — представляет кошелёк: `code`, `status`, `accountNumber`, `isActive`.
+- **`PagedResult<T>`** — обёртка для пагинированных ответов: `items`, `totalCount`, `pageNumber`, `pageSize`, `totalPages`.
+
+Преобразование между доменными сущностями и DTO выполняется с помощью **AutoMapper**, что позволяет скрыть внутреннюю структуру агрегатов и передавать только те данные, которые нужны клиенту. Все DTO находятся в слое **Application** и используются как для запросов, так и для команд.
+
+## Контракты WebAPI
+
+Контракты находятся в папке `WebAPI/Contracts` и определяют структуру запросов и ответов для HTTP-эндпоинтов.
+
+**Пример запроса. Создание/обновление кошелька от платформы ЦР:**
+```json
+POST /api/platform/wallet
+{
+    "mid": "MID001",
+    "participantDRId": "PART001",
+    "walletCode": "WALLET001",
+    "status": "Actv",
+    "accountNumber": "40817810000000000001"
+}
+```
+
+## Обработка ошибок
+
+Все ошибки API обрабатываются централизованно через middleware [`ExceptionHandlingMiddleware`](https://github.com/NikolyaTruLaLaLa/testCentrInvest_DigitalRublAPI/blob/main/WebAPI/Middleware/ExceptionHandlingMiddleware.cs).
 
 ### Допущения и принятые решения
 
@@ -163,6 +195,7 @@ Swagger доступен только в режиме **Development** по ад�
 
 9. **Тестирование:** покрыты модульными тестами все слои. Тесты для слоя Application  используют моки репозиториев и не требуют реальной БД. Тесты для Infrastructure используют реальную БД (PostgreSql). Тесты для WebAPI - интеграционные, и используют SQLite InMemory вместо реальной БД
 
+10. Длина accountNumber зафиксирована в 20 символов.
 ---
 
 ### Как это работает: сценарии
@@ -181,7 +214,8 @@ Swagger доступен только в режиме **Development** по ад�
 
 ## Что бы улучшили при большем времени
 
-- **Устранение костыля с переменной окружения:** передавать конфигурацию в Infrastructure через DI более элегантно.
+- **Устранение костыля с переменной окружения:** передавать конфигурацию в Infrastructure через DI более элегантно. Само появление костыля, было вызвано следующим: чтобы использовать User secrets в Infrastructure надо было бы добавлять зависимость на Programm.cs в WebAPI, а это зависимость нижнего слоя от верхнего. В условиях ограниченного времени было принято решения не тратить время на эту проблему и сделать, как сделано.
+- **Рефакторил бы код**. Для тестов в WebAPI добавил общий базовый класс. Поубирал лишние using.
 - **Более широкое покрытие тестами:** покрытая большая часть TestCases, но не вся.
 - **Логирование и мониторинг:** внедрение Serilog с записью в файл и, возможно, в ELK-стек.
 - **Обработка ошибок и валидация:** улучшить централизованную обработку ошибок, добавить более детальные кастомные исключения.
