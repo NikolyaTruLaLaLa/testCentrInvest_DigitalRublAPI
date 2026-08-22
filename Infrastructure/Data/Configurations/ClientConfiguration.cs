@@ -29,6 +29,9 @@ namespace Infrastructure.Data.Configurations
                 .WithOne(w => w.Client)
                 .HasForeignKey(w => w.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Navigation(c => c.Wallets)
+                .HasField("_wallets")
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

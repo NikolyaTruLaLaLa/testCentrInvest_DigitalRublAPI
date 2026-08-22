@@ -1,8 +1,8 @@
-﻿using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System.IO;
+using System.Reflection;
+
 
 namespace Infrastructure.Data
 {
@@ -10,12 +10,12 @@ namespace Infrastructure.Data
     {
         public AppDbContext CreateDbContext(string[] args)
         {
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "../WebAPI");
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json", optional: true)
                 .AddEnvironmentVariables() 
                 .Build();
-
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("CHANGE_ME"))

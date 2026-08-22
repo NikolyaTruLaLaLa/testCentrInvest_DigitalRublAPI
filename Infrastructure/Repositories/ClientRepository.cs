@@ -36,7 +36,18 @@ namespace Infrastructure.Repositories
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.SaveChangesAsync(cancellationToken);
+            Console.WriteLine("Before SaveChanges");
+            var result = await _context.SaveChangesAsync(cancellationToken);
+            Console.WriteLine($"After SaveChanges: {result} entries saved");
+            return result;
+        }
+
+        public async Task AddWalletAsync(Wallet wallet, CancellationToken cancellationToken)
+        {
+            var entry = _context.Entry(wallet);
+            Console.WriteLine($"Before Add: {entry.State}");
+            await _context.Wallets.AddAsync(wallet, cancellationToken);
+            Console.WriteLine($"After Add: {_context.Entry(wallet).State}"); // должно быть Added
         }
     }
 }
