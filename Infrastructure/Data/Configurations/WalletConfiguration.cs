@@ -45,6 +45,7 @@ namespace Infrastructure.Data.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
 
+
         }
     }
 }

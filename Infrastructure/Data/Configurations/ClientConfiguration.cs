@@ -32,6 +32,7 @@ namespace Infrastructure.Data.Configurations
             builder.Navigation(c => c.Wallets)
                 .HasField("_wallets")
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
+           
         }
     }
 }

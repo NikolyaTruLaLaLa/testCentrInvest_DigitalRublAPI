@@ -81,7 +81,10 @@ using (var scope = app.Services.CreateScope())
     if (!app.Environment.IsEnvironment("Testing"))
     {
         dbContext.Database.Migrate();
+        await DbInitializer.InitializeAsync(scope.ServiceProvider);
     }
 }
+
+
 
 app.Run();
