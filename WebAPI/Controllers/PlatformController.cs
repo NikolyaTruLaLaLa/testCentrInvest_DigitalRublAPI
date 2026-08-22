@@ -43,9 +43,14 @@ namespace WebAPI.Controllers
         [HttpPut("wallet/{code}")]
         public async Task<IActionResult> UpdateWallet(string code, [FromBody] PlatformUpdateRequest request)
         {
-            if (!Enum.TryParse<WalletStatus>(request.NewStatus, out var newStatus))
+            WalletStatus? newStatus = null;
+            if (!string.IsNullOrWhiteSpace(request.NewStatus))
             {
-                return BadRequest($"Недопустимый статус: {request.NewStatus}. Допустимые: Prcs, Actv, Blck, Clsd.");
+                if (!Enum.TryParse<WalletStatus>(request.NewStatus, out var parsed))
+                {
+                    return BadRequest($"Недопустимый статус: {request.NewStatus}. Допустимые: Prcs, Actv, Blck, Clsd.");
+                }
+                newStatus = parsed;
             }
 
             var command = new UpdateWalletFromPlatformCommand

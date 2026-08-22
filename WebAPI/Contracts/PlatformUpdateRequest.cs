@@ -6,7 +6,7 @@ namespace WebAPI.Contracts
         [Required]
         public string Mid { get; set; }
         [Required]
-        public string NewStatus { get; set; }
+        public string? NewStatus { get; set; }
 
         public string? AccountNumber { get; set; }
     }

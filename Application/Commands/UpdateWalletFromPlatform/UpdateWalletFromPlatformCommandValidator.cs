@@ -12,8 +12,15 @@ namespace Application.Commands.UpdateWalletFromPlatform
             RuleFor(x => x.WalletCode)
                 .NotEmpty().WithMessage("Code is necccesary.");
 
-            RuleFor(x => x.NewStatus)
-                .IsInEnum().WithMessage("Status is not allowed. Allowed: Prcs, Actv, Blck.");
+            When(x => x.NewStatus.HasValue, () =>
+            {
+                RuleFor(x => x.NewStatus.Value)
+                    .IsInEnum().WithMessage("Некорректный статус.");
+            });
+
+            RuleFor(x => x)
+            .Must(x => x.NewStatus.HasValue || !string.IsNullOrWhiteSpace(x.AccountNumber))
+            .WithMessage("Должен быть указан либо новый статус, либо номер счёта (или оба).");
         }
     }
 }

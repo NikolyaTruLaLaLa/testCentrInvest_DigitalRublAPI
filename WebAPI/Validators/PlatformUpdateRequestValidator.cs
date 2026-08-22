@@ -7,7 +7,7 @@ namespace WebAPI.Validators
         public PlatformUpdateRequestValidator()
         {
             RuleFor(x => x.NewStatus)
-                .Must(s => new[] { "Prcs", "Actv", "Blck", "Clsd" }.Contains(s))
+                .Must(s => string.IsNullOrEmpty(s) || new[] { "Prcs", "Actv", "Blck", "Clsd" }.Contains(s))
                 .WithMessage("Status is not allowed. Allowed: Prcs, Actv, Blck, Clsd");
 
             RuleFor(x => x.AccountNumber)

@@ -39,7 +39,10 @@ namespace Application.Commands.UpdateWalletFromPlatform
                 throw new KeyNotFoundException($"Wallet with code '{request.WalletCode}' not found.");
             }
 
-            wallet.SetStatus(request.NewStatus);
+            if (request.NewStatus.HasValue)
+            {
+                wallet.SetStatus(request.NewStatus.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.AccountNumber))
                 wallet.SetAccountNumber(request.AccountNumber);

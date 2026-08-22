@@ -46,12 +46,13 @@ namespace Application.Tests.Validators
             {
                 Mid = "mid1",
                 WalletCode = "WALLET001",
-                NewStatus = (WalletStatus)99 
+                NewStatus = (WalletStatus)99
             };
 
             var result = _validator.TestValidate(command);
 
-            result.ShouldHaveValidationErrorFor(x => x.NewStatus);
+          
+            result.ShouldHaveValidationErrorFor(x => x.NewStatus.Value);
         }
 
         [Fact]
