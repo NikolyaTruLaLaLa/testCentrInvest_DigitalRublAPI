@@ -1,6 +1,29 @@
-@WebAPI_HostAddress = http://localhost:5261
-
-GET {{WebAPI_HostAddress}}/weatherforecast/
+### Получить список клиентов (с пагинацией и поиском)
+GET https://localhost:5261/api/Clients?pageNumber=1&pageSize=5&searchTerm=Иван
 Accept: application/json
 
-###
+### Получить кошельки клиента по mid
+GET https://localhost:5261/api/Clients/12345/wallets
+Accept: application/json
+
+### Создать/обновить кошелёк от платформы ЦР
+POST https://localhost:5261/api/platform/wallet
+Content-Type: application/json
+
+{
+  "mid": "12345",
+  "participantDRId": "part-001",
+  "walletCode": "WALLET-001",
+  "status": "Actv",
+  "accountNumber": "40817810000000000001"
+}
+
+### Изменить статус кошелька
+PUT https://localhost:5261/api/platform/wallet/WALLET-001
+Content-Type: application/json
+
+{
+  "mid": "12345",
+  "newStatus": "Blck",
+  "accountNumber": null
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учёт кошельков цифрового рубля</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Учёт кошельков цифрового рубля</h1>
+
+        <!-- Блок ошибок -->
+        <div id="errorBox" class="error-box hidden"></div>
+
+        <!-- Список клиентов -->
+        <section>
+            <h2>Клиенты</h2>
+            <div class="clients-controls">
+                <input type="text" id="searchTerm" placeholder="Поиск по ФИО или mid...">
+                <button id="loadClientsBtn">Загрузить клиентов</button>
+                <span id="pageInfo"></span>
+                <button id="prevPageBtn" disabled>←</button>
+                <button id="nextPageBtn" disabled>→</button>
+            </div>
+            <table id="clientsTable">
+                <thead>
+                    <tr><th>mid</th><th>ФИО</th><th>Участник ЦР</th></tr>
+                </thead>
+                <tbody id="clientsBody">
+                    <tr><td colspan="3">Загрузите список клиентов</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Кошельки клиента <span id="selectedClientMid">(не выбран)</span></h2>
+            <table id="walletsTable">
+                <thead>
+                    <tr><th>Код</th><th>Статус</th><th>Номер счёта</th></tr>
+                </thead>
+                <tbody id="walletsBody">
+                    <tr><td colspan="3">Выберите клиента из списка</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Отправить данные с платформы ЦР</h2>
+            <form id="platformForm">
+                <div class="form-row">
+                    <label>mid*</label>
+                    <input type="text" id="pMid" required>
+                </div>
+                <div class="form-row">
+                    <label>Идентификатор участника</label>
+                    <input type="text" id="pParticipantId">
+                </div>
+                <div class="form-row">
+                    <label>Код кошелька*</label>
+                    <input type="text" id="pCode" required>
+                </div>
+                <div class="form-row">
+                    <label>Статус*</label>
+                    <select id="pStatus" required>
+                        <option value="Prcs">Prcs</option>
+                        <option value="Actv">Actv</option>
+                        <option value="Blck">Blck</option>
+                        <option value="Clsd">Clsd</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Номер счёта</label>
+                    <input type="text" id="pAccount">
+                </div>
+                <button type="submit">Отправить</button>
+            </form>
+        </section>
+        <section>
+            <h2>Изменить данные кошелька</h2>
+            <form id="statusForm">
+                <div class="form-row">
+                    <label>Код кошелька*</label>
+                    <input type="text" id="sCode" required>
+                </div>
+                <div class="form-row">
+                    <label>mid*</label>
+                    <input type="text" id="sMid" required>
+                </div>
+                <div class="form-row">
+                    <label>Новый статус</label>
+                    <select id="sNewStatus">
+                        <option value="">Не менять</option>
+                        <option value="Actv">Actv</option>
+                        <option value="Blck">Blck</option>
+                        <option value="Clsd">Clsd</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Номер счёта (опционально)</label>
+                    <input type="text" id="sAccount">
+                </div>
+                <button type="submit">Обновить</button>
+            </form>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
