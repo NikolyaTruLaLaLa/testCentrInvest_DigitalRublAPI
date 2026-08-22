@@ -26,7 +26,7 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <url-репозитория>
+git clone https://github.com/NikolyaTruLaLaLa/testCentrInvest_DigitalRublAPI
 cd testCentrInvest_DigitalRublAPI
 ```
 
