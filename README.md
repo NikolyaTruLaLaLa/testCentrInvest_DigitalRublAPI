@@ -35,7 +35,7 @@ cd testCentrInvest_DigitalRublAPI
 Убедитесь, что PostgreSQL установлен и запущен. Можно использовать локальную установку или Docker:
 
 ```bash
-docker run --name postgres-db -e POSTGRES_PASSWORD=ваш_пароль -p 5432:5432 -d postgres
+docker run --name postgres-db -e POSTGRES_PASSWORD=ваш_пароль -p 5433:5433 -d postgres
 ```
 
 Создайте базу данных (или дайте приложению создать её автоматически при первом запуске).
@@ -50,7 +50,7 @@ docker run --name postgres-db -e POSTGRES_PASSWORD=ваш_пароль -p 5432:5
 
 ```bash
 cd WebAPI
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=DigitalRubleDb;Username=postgres;Password=ваш_пароль"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5433;Database=DigitalRubleDb;Username=postgres;Password=ваш_пароль"
 ```
 
 #### 3.2. Для Infrastructure (системная переменная)
@@ -58,7 +58,7 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Po
 Так как Infrastructure не имеет своего `appsettings.json`, необходимо задать системную переменную окружения:
 
 ```cmd
-setx ConnectionStrings__DefaultConnection "Host=localhost;Port=5432;Database=DigitalRubleDb;Username=postgres;Password=ваш_пароль"
+setx ConnectionStrings__DefaultConnection "Host=localhost;Port=5433;Database=DigitalRubleDb;Username=postgres;Password=ваш_пароль"
 ```
 
 > **P.S.** Это временное решение (костыль), на которое я пошёл из-за особенностей загрузки конфигурации в слое Infrastructure. При наличии большего времени я бы устранил эту необходимость, передавая конфигурацию через DI более элегантно.
