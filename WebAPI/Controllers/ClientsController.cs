@@ -1,4 +1,5 @@
-﻿using Application.Queries.GetClients;   
+﻿using Application.DTO;
+using Application.Queries.GetClients;   
 using Application.Queries.GetClientWallets;   
 using AutoMapper;
 using MediatR;
@@ -21,12 +22,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClientResponse>>> GetClients()
+        public async Task<ActionResult<PagedResult<ClientResponse>>> GetClients(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? searchTerm = null)
         {
-            var query = new GetClientsQuery();
+            var query = new GetClientsQuery
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SearchTerm = searchTerm
+            };
             var result = await _mediator.Send(query);
-            var clientDtos = result.Items;
-            return Ok(_mapper.Map<IEnumerable<ClientResponse>>(clientDtos));
+
+            var response = new PagedResult<ClientResponse>
+            {
+                Items = _mapper.Map<IEnumerable<ClientResponse>>(result.Items),
+                TotalCount = result.TotalCount,
+                PageNumber = result.PageNumber,
+                PageSize = result.PageSize
+            };
+            return Ok(response);
         }
 
         [HttpGet("{mid}/wallets")]

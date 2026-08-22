@@ -1,11 +1,12 @@
-﻿using Domain.Entities;
+﻿using Application.DTO;
+using Domain.Entities;
 using FluentAssertions;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
 using WebAPI.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace WebAPI.IntegrationTests.Controllers;
@@ -48,19 +49,21 @@ public class ClientsControllerTests : IClassFixture<CustomWebApplicationFactory>
 
 
     [Fact]
-    public async Task GetClients_ShouldReturnListOfClients()
+    public async Task GetClients_ShouldReturnPagedResult()
     {
         ResetAndSeedDatabase();
 
-        var response = await _client.GetAsync("/api/clients");
+        var response = await _client.GetAsync("/api/clients?pageNumber=1&pageSize=10");
         response.EnsureSuccessStatusCode();
 
-        var clients = await response.Content.ReadFromJsonAsync<IEnumerable<ClientResponse>>();
-        clients.Should().NotBeEmpty();
-        var client = clients!.FirstOrDefault(c => c.Mid == "12345");
+        var result = await response.Content.ReadFromJsonAsync<PagedResult<ClientResponse>>();
+        result.Should().NotBeNull();
+        result!.Items.Should().NotBeEmpty();
+        result.TotalCount.Should().BeGreaterThan(0);
+        var client = result.Items.FirstOrDefault(c => c.Mid == "12345");
         client.Should().NotBeNull();
         client!.Mid.Should().Be("12345");
-        clients!.First().FullName.Should().Be("Иванов Иван Иванович");
+        result.Items.First().FullName.Should().Be("Иванов Иван Иванович");
     }
 
 

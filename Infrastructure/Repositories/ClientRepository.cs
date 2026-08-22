@@ -49,5 +49,7 @@ namespace Infrastructure.Repositories
             await _context.Wallets.AddAsync(wallet, cancellationToken);
             Console.WriteLine($"After Add: {_context.Entry(wallet).State}"); // должно быть Added
         }
+
+
     }
 }
