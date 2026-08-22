@@ -40,7 +40,7 @@ namespace Application.Tests.Validators
                 ParticipantDRId = "p",
                 WalletCode = "c",
                 Status = WalletStatus.Actv,
-                AccountNumber = "ACC123"
+                AccountNumber = "12345678901234567890"
             };
             var result = _validator.TestValidate(command);
             result.ShouldNotHaveAnyValidationErrors();

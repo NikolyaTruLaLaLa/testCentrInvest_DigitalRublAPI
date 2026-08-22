@@ -50,7 +50,7 @@ namespace Application.Tests.Queries
 
             var query = new GetClientWalletsQuery { Mid = "999" };
 
-            var ex = await Assert.ThrowsAsync<ApplicationLayerException>(() => _handler.Handle(query, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(query, CancellationToken.None));
       
         }
 

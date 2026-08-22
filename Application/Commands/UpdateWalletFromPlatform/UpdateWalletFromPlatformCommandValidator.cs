@@ -7,13 +7,13 @@ namespace Application.Commands.UpdateWalletFromPlatform
         public UpdateWalletFromPlatformCommandValidator()
         {
             RuleFor(x => x.Mid)
-                .NotEmpty().WithMessage("Mid обязателен.");
+                .NotEmpty().WithMessage("Mid is neccesary.");
 
             RuleFor(x => x.WalletCode)
-                .NotEmpty().WithMessage("Код кошелька обязателен.");
+                .NotEmpty().WithMessage("Code is necccesary.");
 
             RuleFor(x => x.NewStatus)
-                .IsInEnum().WithMessage("Некорректный статус.");
+                .IsInEnum().WithMessage("Status is not allowed. Allowed: Prcs, Actv, Blck.");
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Application.Queries.GetClientWallets
         {
             var client = await _clientRepository.GetByMidWithWalletsAsync(request.Mid, cancellationToken);
             if (client == null)
-                throw new ApplicationLayerException($"Client with mid '{request.Mid}' isn't founded.");
+                throw new KeyNotFoundException($"Client with mid '{request.Mid}' isn't founded.");
 
             return _mapper.Map<IEnumerable<WalletDto>>(client.Wallets);
         }

@@ -8,22 +8,25 @@ namespace Application.Commands.CreateOrUpdateWalletFromPlatform
         public CreateOrUpdateWalletFromPlatformCommandValidator()
         {
             RuleFor(x => x.Mid)
-                .NotEmpty().WithMessage("Mid обязателен.");
+                .NotEmpty().WithMessage("Mid is neccesary.");
 
-            RuleFor(x => x.ParticipantDRId)
-                .NotEmpty().WithMessage("Идентификатор участника обязателен.");
+            When(x => !string.IsNullOrEmpty(x.ParticipantDRId), () =>
+            {
+                RuleFor(x => x.ParticipantDRId)
+                    .MaximumLength(255).WithMessage("ParticipantDRId couldn't be more than 255 symbols.");
+            });
 
             RuleFor(x => x.WalletCode)
-                .NotEmpty().WithMessage("Код кошелька обязателен.");
+                .NotEmpty().WithMessage("Wallet's code is neccesary.");
 
             RuleFor(x => x.Status)
                 .Must(s => s == WalletStatus.Prcs || s == WalletStatus.Actv || s == WalletStatus.Blck)
-                .WithMessage("Допустимые статусы при создании: Prcs, Actv, Blck.");
+                .WithMessage("Status is not allowed. Allowed: Prcs, Actv, Blck.");
 
             When(x => !string.IsNullOrEmpty(x.AccountNumber), () =>
             {
                 RuleFor(x => x.AccountNumber)
-                    .MinimumLength(5).WithMessage("Номер счёта должен содержать минимум 5 символов.");
+                    .Length(20).WithMessage("Number of AccountNumber must contains 20 digits");
             });
         }
     }

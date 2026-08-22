@@ -109,7 +109,7 @@ namespace Application.Tests.Commands
                 Status = WalletStatus.Actv
             };
 
-            var ex = await Assert.ThrowsAsync<DomainException>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<ApplicationLayerException>(() => _handler.Handle(command, CancellationToken.None));
           
         }
 

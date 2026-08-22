@@ -89,7 +89,7 @@ namespace Application.Tests.Commands
                 NewStatus = WalletStatus.Blck
             };
 
-            var ex = await Assert.ThrowsAsync<DomainException>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
         }
 
         [Fact]

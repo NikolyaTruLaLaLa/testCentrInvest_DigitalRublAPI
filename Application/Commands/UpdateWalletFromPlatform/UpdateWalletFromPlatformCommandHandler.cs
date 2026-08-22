@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.Exceptions;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using MediatR;
@@ -26,11 +27,17 @@ namespace Application.Commands.UpdateWalletFromPlatform
         {
             var client = await _clientRepository.GetByMidWithWalletsAsync(request.Mid, cancellationToken);
             if (client == null)
-                throw new ApplicationLayerException($"client with mid '{request.Mid}' isn't found.");
+                throw new KeyNotFoundException($"client with mid '{request.Mid}' isn't found.");
 
-            var wallet = client.getWalletByCode(request.WalletCode);
-            if (wallet == null)
-                throw new ApplicationLayerException($"Wallet with code '{request.WalletCode}' isn't in client {client.Mid} wallets.");
+            Wallet wallet;
+            try
+            {
+                wallet = client.getWalletByCode(request.WalletCode);
+            }
+            catch (DomainException ex) when (ex.Message.Contains("not found"))
+            {
+                throw new KeyNotFoundException($"Wallet with code '{request.WalletCode}' not found.");
+            }
 
             wallet.SetStatus(request.NewStatus);
 
